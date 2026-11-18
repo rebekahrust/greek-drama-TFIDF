@@ -202,9 +202,11 @@ def run(cltk_data: Path, out_dir: Path) -> None:
         author_dir = out_dir / author
         author_dir.mkdir(parents=True, exist_ok=True)
         author_texts = []
-
+        # Perseus folders are capitalized ("Aeschylus"). macOS ignores case but
+        # Linux does not, so match the folder name case-insensitively.
+        source_dir= next((d for d in perseus.iterdir() if d.name.lower()== author), perseus / author)
         for filename in files:
-            xml_path = perseus / author / "opensource" / filename
+            xml_path = source_dir / "opensource" / filename
             if not xml_path.is_file():
                 log.warning("  Missing %s, skipping", xml_path)
                 continue

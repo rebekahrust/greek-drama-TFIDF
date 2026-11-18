@@ -3,7 +3,8 @@
 
 # Preprocessing (kept on the 2016 CLTK API so results match the original project)
 cltk<1.0
-nltk
+setuptools<81 #old CLTK imports pkg_resources, which comes from setuptools
+nltk==3.5 # newer NLTK changed an internal that old CLTK depends on
 bleach
 
 # Analysis
