@@ -1,0 +1,13 @@
+# Python 3.8 recommended: the pre-1.0 CLTK used for preprocessing does not
+# support recent Python versions.
+
+# Preprocessing (kept on the 2016 CLTK API so results match the original project)
+cltk<1.0
+nltk
+bleach
+
+# Analysis
+numpy
+scipy
+scikit-learn>=1.0
+matplotlib>=3.5
