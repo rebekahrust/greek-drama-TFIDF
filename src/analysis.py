@@ -76,6 +76,8 @@ PLAYS = {
 
 TRAGEDIANS = ["aeschylus", "sophocles", "euripides"]
 
+COMEDIANS = ["aristophanes"]
+
 
 def play_file(author: str, code: str) -> Path:
     return Path(author) / f"{AUTHOR_PREFIX[author]}.{code}_gk_vocab.txt"
@@ -96,6 +98,7 @@ EXPERIMENTS: dict[str, dict[str, Path]] = {
     "euripides_plays": plays_of("euripides"),
     "aristophanes_plays": plays_of("aristophanes"),
     "all_tragedy": plays_of(*TRAGEDIANS),
+    "all_comedy": plays_of(*COMEDIANS),
     "all_drama": plays_of(*PLAYS),
     # Do Aristophanes's caricatures of the poets in Frogs sound like the poets?
     "frogs_characters": {
