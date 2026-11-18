@@ -1,4 +1,4 @@
-# Greek Dramas TF-IDF
+# Greek Drama TF-IDF
 
 **Computational stylometry of extant ancient Greek drama: comparing the vocabulary of Aeschylus, Sophocles, Euripides, and Aristophanes at the author, play, and character level.**
 
