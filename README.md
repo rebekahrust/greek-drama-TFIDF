@@ -2,10 +2,11 @@
 
 **Computational stylometry of extant ancient Greek drama: comparing the vocabulary of Aeschylus, Sophocles, Euripides, and Aristophanes at the author, play, and character level.**
 
-![Python](https://img.shields.io/badge/python-3.11-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![Python](https://img.shields.io/badge/python-3.8-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-<!-- TODO: Replace with your best chart, e.g. the play-similarity plot -->
-![Play similarity plot](results/play_similarity_cosine.png)
+![Ward clustering of Aeschylus and Euripides plays with the Frogs caricatures](results/frogs_characters_dendrogram.png)
+
+*Ward clustering on TF-IDF cosine distance. Euripides's plays form one cluster; the disputed* Rhesus *falls outside it; the Oresteia groups tightly; and Aristophanes's caricatures of the two poets cluster with each other rather than with the poets they mock.*
 
 ## Research question
 
@@ -14,14 +15,14 @@ Do word-use patterns in Greek drama follow **genre** (tragedy vs. comedy), **aut
 ## Key findings
 
 > These results are provisional and exploratory (see [Limitations](#limitations)).
-<!-- TODO: These findings come from the 2016 raw-count analysis. Re-run src/analysis.py and update anything that changes with TF-IDF. -->
 
+- **Genre shapes how the poets are imitated.** Aristophanes's characters "Aeschylus" and "Euripides" in *Frogs* cluster with each other and join the real poets' plays only at the last step. The caricatures share comedy's vocabulary more than they borrow either poet's.
+- **Rhesus doesn't group with Euripides.** All eleven of Euripides's undisputed plays form a single cluster. *Rhesus*, whose authorship scholars dispute, falls outside it and groups with Aeschylus's plays instead.
+- ***Prometheus Bound* is loosely attached to Aeschylus.** It joins his other plays late, alongside *Persians*, rather than with the core of his work. This weakly supports doubts about its authorship. *Persians* is also distinctive (a historical subject full of Persian names), so this result is suggestive rather than decisive.
+- **The Oresteia clusters together.** *Agamemnon*, *Libation Bearers*, and *Eumenides*, the only surviving trilogy, form the tightest Aeschylus group, which is a useful check that the method works.
+- **Distinctive words reveal each author's register.** Aristophanes's top terms are colloquial speech (*νή* "by Zeus!", the "this one right here" forms *τουτί* and *οὑτοσί*, *κακοδαίμων* "poor wretch"). Aeschylus's are rare, elevated words (*ἄφερτος* "unbearable", *πολισσοῦχος* "city-guarding"). Sophocles's include stylistic habits like *ἡμίν* and *ἔξοιδα*, while Euripides's are dominated by character names.
 
-
-- **Generation may matter more than genre.** By cosine similarity, Sophocles, Euripides, and Aristophanes (comedy) are closer to each other than any of them is to Aeschylus, who belongs to an older generation and is known for coining words.
-- **Disputed plays stand out.** *Prometheus Bound* falls well away from Aeschylus's other plays, and *Rhesus* is an outlier among Euripides's plays. Both results agree with the scholarly doubts about who wrote them.
-- **The Oresteia clusters together.** *Agamemnon*, *Libation Bearers*, and *Eumenides*, the only surviving trilogy, sit close together, which is a useful check that the method works.
-- **Aristophanes's caricatures don't match the real authors.** The characters "Aeschylus" and "Euripides" in *Frogs* show no strong similarity to the real playwrights' vocabulary.
+Earlier raw-count results (2016) suggested that generation mattered more than genre. With TF-IDF weighting that pattern isn't clearly visible, so it's left out pending a closer look at `results/authors_cosine.csv`.
 
 ## Quickstart
 
@@ -40,7 +41,7 @@ Charts, similarity matrices (CSV), and each document's most distinctive words ar
 | Stage | What happens |
 |---|---|
 | **Input** | Download the Greek corpus (Perseus TEI XML) with the [Classical Language Toolkit (CLTK)](https://github.com/cltk/cltk). |
-| **Pre-processing** | Parse the XML with Python's DOM parser, split each play into speaker lines (keeping line numbers), convert Beta Code to Unicode, lemmatize, strip punctuation, and remove stopwords. Output is organized as `author / play / character / lines`. |
+| **Pre-processing** | Parse the XML with Python's DOM parser, split each play into speaker lines (keeping line numbers), convert Beta Code to Unicode, lemmatize, standardize accents (so *δὲ* and *δέ* count as one word), strip punctuation, and remove stopwords. Output is organized as `author / play / character / lines`. |
 | **Processing** | Build TF-IDF vectors with scikit-learn's `TfidfVectorizer`. TF-IDF lowers the weight of words that are common across the whole corpus, which makes up for stopwords (pronouns, forms of *εἰμί*) that get past an imperfect Greek lemmatizer. |
 | **Comparison** | Measure pairwise **cosine similarity**, the primary measure because it adjusts for document length, and **Euclidean distance**, for comparison. |
 | **Output** | Project the distance matrices into 2D with multidimensional scaling (MDS), cluster them with Ward's method, and plot the results at three levels: author, play, and character. MDS axes have no inherent meaning, and negative coordinates are normal; only relative position matters. |
@@ -60,7 +61,7 @@ Charts, similarity matrices (CSV), and each document's most distinctive words ar
 ## Limitations
 
 - **The evidence is fragmentary.** Surviving Greek drama is only a sliver of what was produced, and some surviving plays (several by Euripides, for example) aren't available in the open-source Perseus corpus.
-- **Lemmatization is imperfect.** The Greek lemmatizer misses some inflected forms, and that noise can affect the results.
+- **Lemmatization is imperfect.** The 2016-era Greek lemmatizer leaves some forms unreduced (e.g. *δαναϊδῶν*), garbles a few (*εἶἑν* for *εἶεν*), and makes some outright errors: it reads *ἐμέ* ("me") as *ἐμέω* ("to vomit"). Some names have their breathing mark on the wrong vowel (*ἐυελπίδης*). This noise is visible in the top-terms lists.
 - **Similarity is not proof.** Distance measures are a way to question the data, not a basis for conclusions. As Drucker warns, visualizations can mislead humanists. These findings suggest patterns; they don't establish them.
 
 ## Applications beyond classics
@@ -69,7 +70,7 @@ The same pipeline (structured parsing → normalization → TF-IDF vectorization
 
 ## Background and credits
 
-Originally built in December 2016 as a digital humanities research project. The original version used raw word counts. The 2026 update adds true TF-IDF weighting, fixes clustering and plotting bugs, and replaces the notebooks with a reproducible pipeline. The original is preserved in [`archive/2016/`](archive/2016/) and as the [`v2016` release](https://github.com/rebekahrust/greek-tragedies-TFIDF/releases/tag/v2016).
+Originally built in December 2016 as a digital humanities research project. The original version used raw word counts. The 2026 update adds true TF-IDF weighting, standardizes Greek accents so stopwords are actually removed, fixes clustering, plotting, and case-sensitive path bugs, pins the dependency versions the old toolkit needs, and replaces the notebooks with a reproducible pipeline. The original is preserved in [`archive/2016/`](archive/2016/) and as the [`v2016` release](https://github.com/rebekahrust/greek-tragedies-TFIDF/releases/tag/v2016).
 
 - [Classical Language Toolkit](https://github.com/cltk/cltk): Kyle P. Johnson, Patrick J. Burns, et al.
 - Allen Riddell's tutorials on text vectorization
